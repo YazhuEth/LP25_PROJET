@@ -26,6 +26,28 @@ void parse_dir(char *path, FILE *output_file) {
     // 1. Check parameters
     // 2. Gor through all entries: if file, write it to the output file; if a dir, call parse dir on it
     // 3. Clear all allocated resources
+     DIR *dir = opendir(path);
+    struct dirent *entry;
+    char temp[1024];
+
+    if (dir){
+        entry=readdir(dir);
+        while(entry != NULL){
+            if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")){
+                if(entry->d_type == DT_DIR){
+                    strcpy(temp, path);
+                    strcat(temp, "/");
+                    strcat(temp, entry->d_name);
+                    parse_dir(temp,output_file);
+                }
+                if(entry->d_type == DT_REG){
+                    fprintf(output_file, "%s/%s\n", path, entry->d_name);
+                }
+            }
+            entry=readdir(dir);
+        }
+        closedir(dir);
+    }
 }
 
 /*!
@@ -219,6 +241,7 @@ void parse_file(char *filepath, char *output) {
     }
 }
 
+
 /*!
  * @brief process_directory goes recursively into directory pointed by its task parameter object_directory
  * and lists all of its files (with complete path) into the file defined by task parameter temporary_directory/name of
@@ -226,11 +249,19 @@ void parse_file(char *filepath, char *output) {
  * @param task the task to execute: it is a directory_task_t that shall be cast from task pointer
  * Use parse_dir.
  */
-void process_directory(task_t *task) {
-    // 1. Check parameters
-    // 2. Go through dir tree and find all regular files
-    // 3. Write all file names into output file
-    // 4. Clear all allocated resources
+void process_directory(char *object_directory, char *temp_files, char *user) {
+        char adresse_f_user[500];
+        strcpy(adresse_f_user, temp_files);
+        strcat(adresse_f_user, "/");
+        strcat(adresse_f_user, user);
+
+        FILE *fichier = fopen(adresse_f_user, "w");
+
+        if (fichier){
+            parse_dir(object_directory, fichier);
+        }
+
+        fclose(fichier);
 }
 
 /*!
