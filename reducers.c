@@ -49,6 +49,8 @@ sender_t *find_source_in_list(sender_t *list, char *source_email) {
 void add_recipient_to_source(sender_t *source, char *recipient_email) {
 }
 
+
+
 /*!
  * @brief files_list_reducer is the first reducer. It uses concatenates all temporary files from the first step into
  * a single file. Don't forget to sync filesystem before leaving the function.
@@ -57,7 +59,40 @@ void add_recipient_to_source(sender_t *source, char *recipient_email) {
  * @param output_file path to the output file (default name is step1_output, but we'll keep it as a parameter).
  */
 void files_list_reducer(char *data_source, char *temp_files, char *output_file) {
+      DIR *dir = opendir(temp_files);
+    FILE *output = fopen(output_file, "w+");
+    struct dirent *entry ;
+    char add[500];
+    char buffer[500];
+    int compteur=0;
+    if(output){
+        if(dir){
+            entry = readdir(dir);
+            while(entry != NULL){
+                if(entry->d_type==DT_REG){
+                    strcpy(add, temp_files);
+                    strcat(add, "/");
+                    strcat(add, entry->d_name);
+                    FILE *fichier = fopen(add, "r");
+                    if (fichier){
+                        while(fgets(buffer,499,fichier) != NULL){
+                            fprintf(output, "%s" ,buffer);
+                            compteur++;
+                        }
+                    }
+                    fclose(fichier);
+                    remove(add);
+                }
+                entry=readdir(dir);
+            }
+        }
+        closedir(dir);
+    }
+    fclose(output);
+
+    printf("nb ligne saisie : %d \n", compteur);
 }
+
 
 /*!
  * @brief files_reducer opens the second temporary output file (default step2_output) and collates all sender/recipient
