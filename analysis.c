@@ -269,8 +269,10 @@ void process_directory(char *object_directory, char *temp_files, char *user) {
  * @param task a file_task_t as a pointer to a task (you shall cast it to the proper type)
  * Uses parse_file
  */
-void process_file(task_t *task) {
+void process_file(char *object_file, char *temp_directory ) {
     // 1. Check parameters
     // 2. Build full path to all parameters
     // 3. Call parse_file
+    parse_file(object_file, temp_directory);
+
 }
