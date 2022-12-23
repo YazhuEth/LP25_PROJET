@@ -64,6 +64,7 @@ void direct_fork_directories(char *data_source, char *temp_files, uint16_t nb_pr
             closedir(dir);
 }
 
+
 /*!
  * @brief direct_fork_files runs the files analysis with direct calls to fork
  * @param data_source the data source containing the files
@@ -76,4 +77,37 @@ void direct_fork_files(char *data_source, char *temp_files, uint16_t nb_proc) {
     // 3. fork and start a task on current file.
     // 3 bis: if max processes count already run, wait for one to end before starting a task.
     // 4. Cleanup
+    int compteur=0;
+    char add_f[1024];
+    char buffer[1024];
+
+    strcpy(add_f, temp_files);
+    strcat(add_f,"/step1_output");
+    FILE *fichier = fopen(add_f, "r");
+
+        if(fichier){
+            for(int i=0; i<517401; i++){
+                while(compteur==nb_proc){
+                    wait(0);
+                    compteur--;
+                }
+                fgets(buffer, 1023, fichier);
+               
+                if(fork()==0){
+                    process_file(buffer, temp_files);
+                    exit(0);
+                }
+                else{
+                    compteur++;
+                }
+            }
+            }
+            
+            int rest=compteur;
+
+            for(int i=0; i<rest; i++){
+                wait(0);
+            }
+
+            fclose(fichier);
 }
