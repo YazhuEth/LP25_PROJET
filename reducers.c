@@ -24,13 +24,16 @@ sender_t *add_source_to_list(sender_t *list, char *source_email) {
     sender_t* element= (sender_t*) malloc(sizeof(sender_t)); // création d'un élément sender
     strcpy(element->recipient_address,source_email); // attribution du sourcemail à l'element  strcpy(la structure, source);
     sender_t* searcher = find_source_in_list(list,source_email) ;
+    
     if(list->recipient_address == NULL){
         return element;}
+    
     else if (searcher == NULL){
         element->next = list;
         list->prev = element; // on place l'element en tete de liste;
         return element;
     }
+    
     else{
         return list;
     }
@@ -64,10 +67,10 @@ void clear_sources_list(sender_t *list) {
 sender_t *find_source_in_list(sender_t *list, char *source_email) {
 // partie de code pour régler le probleme de strmcp
     char *adr_retour_ligne;
-    adr_retour_ligne = strpbrk(source_email, "\n");/* Recherche de l'adresse d'un \n dans la variable chaine */
-    if (adr_retour_ligne != NULL)/* Adresse trouvée ? */
+    adr_retour_ligne = strpbrk(source_email, "\n");// Recherche de l'adresse d'un \n dans la variable chaine 
+    if (adr_retour_ligne != NULL) // Adresse trouvée ? 
     {
-        *adr_retour_ligne = 0; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
+        *adr_retour_ligne = 0; // Remplacement du caractère par un octet nul (fin de chaîne en C) 
     }
     sender_t *q = list;
     while(q->next != NULL && (strcmp(q->recipient_address,source_email) != 0) ){ // tant que on a pas fait toute la liste et qu'on a pas trouvé de correspondance entre source mail et un sender de la chaine
@@ -90,10 +93,10 @@ sender_t *find_source_in_list(sender_t *list, char *source_email) {
 recipient_t *find_source_in_list_of_recipients(recipient_t *list, char *source_email) {
 // partie de code pour régler le probleme de strmcp
     char *adr_retour_l;
-    adr_retour_l = strpbrk(source_email, "\n");/* Recherche de l'adresse d'un \n dans la variable chaine */
-    if(adr_retour_l != NULL)/* Adresse trouvée ? */
+    adr_retour_l = strpbrk(source_email, "\n");// Recherche de l'adresse d'un \n dans la variable chaine 
+    if(adr_retour_l != NULL)// Adresse trouvée ? 
     {
-        *adr_retour_l = 0; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
+        *adr_retour_l = 0;//  Remplacement du caractère par un octet nul (fin de chaîne en C) 
     }
     recipient_t *q = list;
     while(q->next != NULL && (strcmp(q->recipient_address,source_email) != 0) ){ // tant que on a pas fait toute la liste et qu'on a pas trouvé de correspondance entre source mail et un sender de la chaine
@@ -115,10 +118,10 @@ recipient_t *find_source_in_list_of_recipients(recipient_t *list, char *source_e
  */
 void add_recipient_to_source(sender_t *source, char *recipient_email) {
      char *adr_retour_ligne;
-    adr_retour_ligne = strpbrk(recipient_email, "\n");/* Recherche de l'adresse d'un \n dans la variable chaine */
-    if (adr_retour_ligne != NULL)/* Adresse trouvée ? */
+    adr_retour_ligne = strpbrk(recipient_email, "\n");// Recherche de l'adresse d'un \n dans la variable chaine 
+    if (adr_retour_ligne != NULL)// Adresse trouvée ? 
     {
-        *adr_retour_ligne = 0; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
+        *adr_retour_ligne = 0; // Remplacement du caractère par un octet nul (fin de chaîne en C) 
     }
     recipient_t* q = source->head;
     if (q != NULL){
@@ -213,17 +216,16 @@ void files_list_reducer(char *data_source, char *temp_files, char *output_file) 
  * @param output_file final output file to be written by your function
  */
 void files_reducer(char *temp_file, char *output_file) {
-// Première partie qui consiste à mettre toute les informations dans la double liste chainé.
-
+    
     FILE *f_in = NULL;
     f_in = fopen(temp_file,"r");
     sender_t* listS = (sender_t*) malloc(sizeof(sender_t)); // on initialise la liste chainée
 
     if(f_in != NULL){
-        char buffer[STR_MAX_LEN]; // on initialise le buffer car on le vide à chaque itération
+        char buffer[STR_MAX_LEN]; // on initialise le buffer
        while(fgets(buffer,STR_MAX_LEN,f_in) != NULL){
             char d[] = " ";
-            char *p = strtok(buffer, d);  // on découpe la string et on fait pointé p sur  le premier mail
+            char *p = strtok(buffer, d);  // on découpe la chaine de caractère et on fait pointé p sur le premier mail
             listS = add_source_to_list(listS,p); // on ajoute le sender à la liste chainée
             sender_t* senderFound = find_source_in_list(listS,p); // retourne un pointeur vers l'élément de la liste sender qui contient le mail
             if(senderFound != NULL){
@@ -231,7 +233,7 @@ void files_reducer(char *temp_file, char *output_file) {
                 while(p != NULL)
                 {
                     add_recipient_to_source(senderFound,p); // ajoute le receiver à la liste chainé relié au sender.
-                    p = strtok(NULL, d); // mettre dans p le prochain receiver
+                    p = strtok(NULL, d); // on fait pointé p sur la chaine de caractère correspondant au prochain receiver. 
 
                 }
             }
