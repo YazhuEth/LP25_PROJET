@@ -91,6 +91,32 @@ simple_recipient_t *add_recipient_to_list(char *recipient_email, simple_recipien
 }
 
 /*!
+ * @brief add element to a list of recipient
+ * @param chained list of recipient
+ * @param source_email (string) 
+ * @return the updated list
+ */
+simple_recipient_t *add_element_to_list(simple_recipient_t *list, char *source_email) {
+
+    char *adr_retour_ligne2;
+    adr_retour_ligne2 = strpbrk(source_email, "\n");// Recherche de l'adresse d'un \n dans la variable chaine 
+    if (adr_retour_ligne2 != NULL) // Adresse trouvée ? 
+    {
+        *adr_retour_ligne2 = 0; // Remplacement du caractère par un octet nul (fin de chaîne en C) 
+    }
+    simple_recipient_t* element= (simple_recipient_t*) malloc(sizeof(simple_recipient_t)); // création d'un élément 
+    strcpy(element->email,source_email); // attribution du sourcemail à l'element 
+    
+    if(list == NULL){
+        return element;}
+    
+    else{
+        element->next = list;
+        return element;
+    }
+}
+
+/*!
  * @brief extract_emails extracts all the e-mails from a buffer and put the e-mails into a recipients list
  * @param buffer the buffer containing one or more e-mails
  * @param list the resulting list
@@ -102,17 +128,12 @@ simple_recipient_t *extract_emails(char *buffer, simple_recipient_t *list) {
     // 3. Add each e-mail to list
     // 4. Return list
      char recipient_email[STR_MAX_LEN];
-    FILE *f_in=fopen(buffer, "r");
-
-    if(f_in!=NULL){
-        fscanf(f_in, "%s ", recipient_email);
-        while(strcmp(recipient_email, "fin" )!=0){
-            list= add_recipient_to_list(recipient_email, list);
-            fscanf(f_in, "%s ", recipient_email);
-        }
-    }
-
-
+     char d[] = ", ";
+    char *p = strtok(buffer, d);  // on découpe la chaine de caractère et on fait pointé p sur le premier mail
+     while( p != NULL){
+            add_element_to_list(list,p);
+            p = strtok(NULL, d); // on recupère le premier receiver
+            }
     return list;
 }
 
@@ -223,10 +244,11 @@ void parse_file(char *filepath, char *output) {
 
 
         list=extract_emails(tmp, list);
-        affichage(list);
+      //  affichage(list);
+        
+        // Dans le cas où les données sont stockés dans une liste chainé et non dans un "fichier buffer"
 
-
-        FILE *f_out=fopen(output, "a"); // ouverture du fichier output pour écrire les emails dedans.
+        FILE *f_out=fopen(output, "w"); // ouverture du fichier output pour écrire les emails dedans.
         fprintf(f_out, "%s ", from);
         while(list->next!=NULL ){
             fprintf(f_out, "%s ", list->email);
@@ -235,8 +257,6 @@ void parse_file(char *filepath, char *output) {
         fprintf(f_out, "%s\n", list->email);
 
         fclose(f_out);
-
-
         clear_recipient_list(list);
     }
 }
