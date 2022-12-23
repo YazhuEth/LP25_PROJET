@@ -149,6 +149,14 @@ void extract_e_mail(char buffer[], char destination[]) {
 // Used to track status in e-mail (for multi lines To, Cc, and Bcc fields)
 typedef enum {IN_DEST_FIELD, OUT_OF_DEST_FIELD} read_status_t;
 
+
+
+
+/* La fonction parse_file pose problème lors de l'exécution du programme, nous nous sommes rendu compte après coup que le stockage des données
+sous forme d'une liste chainée etait plus fonctionnel qu'un "fichier_buffer".Nous ne sommes pas parvenue à effectuer toutes les modifications necessaires
+au fonctionnment de cette partie du code.*/
+
+
 /*!
  * @brief parse_file parses mail file at filepath location and writes the result to
  * file whose location is on path output
