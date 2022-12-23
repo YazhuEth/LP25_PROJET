@@ -145,7 +145,7 @@ void parse_file(char *filepath, char *output) {
     // 6. Unlock file
     // 7. Close file
     // 8. Clear all allocated resources
-    char tmp[7]={'t', 'm', 'p', '.', 't', 'x','t'};
+    char tmp[STR_MAX_LEN]="tmp.txt";
     FILE *f_in=fopen(filepath, "r");
     FILE *f_buffer=fopen(tmp, "w");
     char word[STR_MAX_LEN];
@@ -153,7 +153,7 @@ void parse_file(char *filepath, char *output) {
     char buffer[STR_MAX_LEN];
     simple_recipient_t *list=NULL;
 
-    // Dans un premier temps on récupère tout les emails qu'on stock provisoirement (prc que c'est demander de faire comme ça).
+    // Dans un premier temps on récupère tous les emails qu'on stock provisoirement.
 
     if(f_in==NULL){
         printf("Error while downloading the file");
