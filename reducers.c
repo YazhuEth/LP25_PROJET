@@ -114,6 +114,12 @@ recipient_t *find_source_in_list_of_recipients(recipient_t *list, char *source_e
  * @param recipient_email the recipient e-mail to add/update as a string
  */
 void add_recipient_to_source(sender_t *source, char *recipient_email) {
+     char *adr_retour_ligne;
+    adr_retour_ligne = strpbrk(recipient_email, "\n");/* Recherche de l'adresse d'un \n dans la variable chaine */
+    if (adr_retour_ligne != NULL)/* Adresse trouvée ? */
+    {
+        *adr_retour_ligne = 0; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
+    }
     recipient_t* q = source->head;
     if (q != NULL){
         q=find_source_in_list_of_recipients(q,recipient_email);
