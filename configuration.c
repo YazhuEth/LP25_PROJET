@@ -9,19 +9,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-
-#include "utility.h"
-//
-// Created by flassabe on 14/10/22.
-//
-
-#include "configuration.h"
-
-#include <getopt.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
 #include "utility.h"
 
 /*!
@@ -34,7 +21,7 @@
  * @return the pointer to the updated base configuration
  */
 configuration_t *make_configuration(configuration_t *base_configuration, char *argv[], int argc) {
-    int opt;
+    int opt,cpu_number;
     FILE *file;
     while((opt=getopt(argc,argv,":if:fdtovc"))!=-1){
         switch(opt){
@@ -44,6 +31,10 @@ configuration_t *make_configuration(configuration_t *base_configuration, char *a
                     read_cfg_file(base_configuration,optarg);
                 }
                 break;
+            default:
+                break;
+        }
+        switch(opt){    
             case 'd':
                 strcat(base_configuration->data_path,argv[optind]);
                 break;
@@ -59,7 +50,8 @@ configuration_t *make_configuration(configuration_t *base_configuration, char *a
                 }
                 break;
             case 'c':
-                //base_configuration->cpu_core_multiplier=argv[optind];
+                cpu_number=atoi(argv[optind]);
+                base_configuration->cpu_core_multiplier=cpu_number;
                 break;
         }
     }
@@ -72,10 +64,9 @@ configuration_t *make_configuration(configuration_t *base_configuration, char *a
  * @return a pointer to the first non-space character in str
  */
 char *skip_spaces(char *str) {
-    char *skip=(char*)malloc(sizeof(char));
-    str=strchr(str,' ');
-    skip=strtok(str," ");
-    str=skip;
+    while (isspace(*str)) {
+        str++;
+    }
     return str;
 }
 
@@ -86,14 +77,9 @@ char *skip_spaces(char *str) {
  * @return a pointer to the first non-space character after the =, NULL if no equal was found
  */
 char *check_equal(char *str) {
-    char *equal=strstr(str,"=");
-    char *word=(char*)malloc(sizeof(char));
-    if(!equal){
-        return NULL;
-    }
-    str=strchr(str,'=');
-    word=strtok(str,"=");
-    str=word; //retour de tout ce qu'il suit
+    str=skip_spaces(str);
+    str++;
+    str=skip_spaces(str);
     return str;
 }
 
@@ -104,13 +90,29 @@ char *check_equal(char *str) {
  * @return a pointer to the character after the end of the extracted word
  */
 char *get_word(char *source, char *target) {
-    char head=target[0];
-    char tail={target[strlen(target)-1]};
-    char *word=strstr(source,target);
-    if(word!=NULL){
-        word=strchr(word,' ');
+    char *word;
+    int i=0,j=0,head=0;
+    while(source[i]!='\0'){
+        if(j!=strlen(target)-1){
+            head++;
+        }
+        if(!isspace(source[i])){
+            if(j!=strlen(target)-1){
+                if(source[i]==target[j]){
+                    j++;
+                }else{
+                    j=0;
+                }
+            }
+        }
+        i++;
     }
-    source=word;
+    if(j==0) head=0;
+    for(int k=0;k<head;k++){
+        source++;
+    }
+    if(head!=0) source++;
+    
     return source;
 }
 
@@ -123,50 +125,46 @@ char *get_word(char *source, char *target) {
  */
 configuration_t *read_cfg_file(configuration_t *base_configuration, char *path_to_cfg_file) {
     FILE *file=fopen(path_to_cfg_file,"r");
-    char *d_path,*tmp_dir,*output,*verbose,*cpu;
+    char *d_path,*tmp_dir,*output,*verbose,*cpu,*back;
     if(file!=NULL){
-        while(fgetc(file)!=EOF){
-            char buffer[500];
-            fgets(buffer,500,file);        
-            d_path=get_word(buffer,"ata_path");
-            if(d_path!=NULL){
-                d_path=check_equal(d_path);
-                d_path=skip_spaces(d_path);
-                strcpy(base_configuration->data_path,d_path);
-            }
-            buffer[500];
-            tmp_dir=get_word(buffer,"emporary_directory");
-            if(tmp_dir!=NULL){
-                tmp_dir=check_equal(tmp_dir);
-                tmp_dir=skip_spaces(tmp_dir);
-                strcpy(base_configuration->temporary_directory,tmp_dir);
-            }
-            buffer[500];
-            output=get_word(buffer,"utput_file");
-            if(output!=NULL){
-                output=check_equal(output);
-                output=skip_spaces(output);
-                strcpy(base_configuration->output_file,output);
-            }
-            buffer[500];
-            verbose=get_word(buffer,"s_verbose");
-            if(verbose!=NULL){
+        char buffer[200];
+        while(fgets(buffer,sizeof(buffer),file)!=NULL){
+            verbose=get_word(buffer,"is_verbose");
+            if(strstr(buffer,"is_verbose")!=NULL){
+                verbose=strtok(verbose,"\n");
                 verbose=check_equal(verbose);
-                verbose=skip_spaces(verbose);
-                if(strstr(verbose,"yes")!=NULL){ //marche pas
-                    base_configuration->is_verbose=1;
+                if(strstr(verbose,"yes")!=NULL) base_configuration->is_verbose=1;
+            }else{
+                d_path=get_word(buffer,"data_path");
+                if(strstr(buffer,"data_path")!=NULL){
+                    d_path=strtok(d_path,"\n");
+                    d_path=check_equal(d_path);
+                    strcpy(base_configuration->data_path,d_path);
+                }else{
+                    tmp_dir=get_word(buffer,"temporary_directory");
+                    if(strstr(buffer,"temporary_directory")!=NULL){
+                        tmp_dir=strtok(tmp_dir,"\n");
+                        tmp_dir=check_equal(tmp_dir);
+                        strcpy(base_configuration->temporary_directory,tmp_dir);
+                    }else{
+                        output=get_word(buffer,"output_file");
+                        if(strstr(buffer,"output_file")!=NULL){
+                            output=strtok(output,"\n");
+                            output=check_equal(output);
+                            strcpy(base_configuration->output_file,output);
+                        }else{
+                            cpu=get_word(buffer,"cpu_core_multiplier");
+                            if(strstr(buffer,"cpu_core_multiplier")!=NULL){
+                                cpu=check_equal(cpu);
+                                int cpu_number=atoi(cpu);
+                                base_configuration->cpu_core_multiplier=cpu_number;
+                            }
+                        }
+                    }
                 }
             }
-            buffer[500];
-            cpu=get_word(buffer,"pu_core_multiplier");
-            if(cpu!=NULL){
-                cpu=check_equal(cpu);
-                cpu=skip_spaces(cpu);
-                int cpu_number=atoi(cpu);
-                base_configuration->cpu_core_multiplier=cpu_number;
-                fclose(file);
-            }
         }
+        fclose(file);
     }else{
         perror("Failed opening file: ");
     }
@@ -196,15 +194,12 @@ void display_configuration(configuration_t *configuration) {
  */
 bool is_configuration_valid(configuration_t *configuration) {
     if(!directory_exists(configuration->data_path)){
-        printf("data:%d %s\n",directory_exists(configuration->data_path),configuration->data_path);
         return false;
     }
     if(!directory_exists(configuration->temporary_directory)){
-        printf("temp:%d\n",directory_exists(configuration->temporary_directory));
         return false;
     }
     if(!path_to_file_exists(configuration->output_file)){
-        printf("output:%d\n",directory_exists(configuration->output_file));
         return false;
     }
     return true;
