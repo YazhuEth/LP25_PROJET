@@ -31,14 +31,14 @@ char *concat_path(char *prefix, char *suffix, char *full_path) {
  * @return true if directory exists, false else
  */
 bool directory_exists(char *path) {
-    DIR *dir opendir(path)
+    struct dirent *d;
+    DIR *dir=opendir(path);
     if(dir){
-        closedir(dir);
-        return true;
+        if((d=readdir(dir))!=NULL){
+            return true;
+        }
     }
-    else{
     return false;
-    }
 }
 
 /*!
@@ -49,15 +49,23 @@ bool directory_exists(char *path) {
  * @return true if path to file exists, false else
  */
 bool path_to_file_exists(char *path) {
-    *FILE fichier=fopen(path,"w+");
-    if(fichier){
-        flclose(fichier);
-        remove(path);
-        return true
+    char *file_name=strtok(strrchr(path,'/'),"/");
+    int tail=strlen(path)-strlen(file_name);
+    char dir_path[tail];
+    for(int i=tail-1;i>-1;i--){
+        dir_path[i]=path[i];
     }
-    else{
+    dir_path[strlen(dir_path)-6]='\0';    
+    if(directory_exists(dir_path)){
+        struct dirent *d;
+        DIR *dir=opendir(dir_path);
+        while((d=readdir(dir))!=NULL){
+            if(strstr(d->d_name,file_name)!=NULL){
+                return true;
+            }
+        }
+    }
     return false;
-    }
 }
 
 /*!
