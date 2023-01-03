@@ -21,6 +21,12 @@
  * @return a pointer to the updated beginning of the list
  */
 sender_t *add_source_to_list(sender_t *list, char *source_email) {
+    char *adr_retour_ligne;
+    adr_retour_ligne = strpbrk(source_email, "\n");/* Recherche de l'adresse d'un \n dans la variable chaine */
+    if (adr_retour_ligne != NULL)/* Adresse trouvée ? */
+    {
+        *adr_retour_ligne = 0; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
+    }
     sender_t* searcher = find_source_in_list(list,source_email) ;
     
     if(list->recipient_address == NULL){
@@ -68,13 +74,6 @@ void clear_sources_list(sender_t *list) {
  * @return a pointer to the matching source, NULL if none exists
  */
 sender_t *find_source_in_list(sender_t *list, char *source_email) {
-// partie de code pour régler le probleme de strmcp
-    char *adr_retour_ligne;
-    adr_retour_ligne = strpbrk(source_email, "\n");// Recherche de l'adresse d'un \n dans la variable chaine 
-    if (adr_retour_ligne != NULL) // Adresse trouvée ? 
-    {
-        *adr_retour_ligne = 0; // Remplacement du caractère par un octet nul (fin de chaîne en C) 
-    }
     sender_t *q = list;
     while(q->next != NULL && (strcmp(q->recipient_address,source_email) != 0) ){ // tant que on a pas fait toute la liste et qu'on a pas trouvé de correspondance entre source mail et un sender de la chaine
         q = q->next;
@@ -94,13 +93,6 @@ sender_t *find_source_in_list(sender_t *list, char *source_email) {
  * @return a pointer to the matching source, NULL if none exists
  */
 recipient_t *find_source_in_list_of_recipients(recipient_t *list, char *source_email) {
-// partie de code pour régler le probleme de strmcp
-    char *adr_retour_l;
-    adr_retour_l = strpbrk(source_email, "\n");// Recherche de l'adresse d'un \n dans la variable chaine 
-    if(adr_retour_l != NULL)// Adresse trouvée ? 
-    {
-        *adr_retour_l = 0;//  Remplacement du caractère par un octet nul (fin de chaîne en C) 
-    }
     recipient_t *q = list;
     while(q->next != NULL && (strcmp(q->recipient_address,source_email) != 0) ){ // tant que on a pas fait toute la liste et qu'on a pas trouvé de correspondance entre source mail et un sender de la chaine
         q = q->next;
