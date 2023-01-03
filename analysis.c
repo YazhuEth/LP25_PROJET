@@ -1,3 +1,22 @@
+//
+// Created by flassabe on 26/10/22.
+//
+
+#include "analysis.h"
+
+#include <dirent.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <libgen.h>
+#include <string.h>
+#include <fcntl.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <sys/file.h>
+
+#include "utility.h"
+
+
 /*!
  * @brief parse_dir parses a directory to find all files in it and its subdirs (recursive analysis of root directory)
  * All files must be output with their full path into the output file.
