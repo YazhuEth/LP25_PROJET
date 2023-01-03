@@ -99,7 +99,7 @@ struct dirent *next_dir(struct dirent *entry, DIR *dir) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0 || entry->d_type != DT_DIR){
             entry = readdir(dir);
         }
-        else {break;}
+        else {return -1;}
     }
 
 	return entry;
