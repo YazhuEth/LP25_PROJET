@@ -58,6 +58,7 @@ void clear_sources_list(sender_t *list) {
         p=p->next;
         free(p->prev);
     }
+    free(p);
 }
 
 /*!
