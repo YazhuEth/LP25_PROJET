@@ -24,13 +24,11 @@
  */
 void parse_dir(char *path, FILE *output_file) {
     // 1. Check parameters
-    // 2. Gor through all entries: if file, write it to the output file; if a dir, call parse dir on it
-    // 3. Clear all allocated resources
-     DIR *dir = opendir(path);
+    DIR *dir = opendir(path);
     struct dirent *entry;
     char temp[1024];
 
-    if (dir){
+    if (dir && output_file){
         entry=readdir(dir);
         while(entry != NULL){
             if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")){
@@ -46,9 +44,16 @@ void parse_dir(char *path, FILE *output_file) {
             }
             entry=readdir(dir);
         }
+
         closedir(dir);
     }
+    else{
+        printf("Le directory ou le fichier ne s'ouvre pas/n'est pas ouvert\n");
+        return -1;
+    }
+
 }
+
 
 /*!
  * @brief clear_recipient_list clears all recipients in a recipients list
@@ -278,6 +283,7 @@ void parse_file(char *filepath, char *output) {
  * Use parse_dir.
  */
 void process_directory(char *object_directory, char *temp_files, char *user) {
+    // 1. Check parameters
         char adresse_f_user[500];
         strcpy(adresse_f_user, temp_files);
         strcat(adresse_f_user, "/");
@@ -288,9 +294,14 @@ void process_directory(char *object_directory, char *temp_files, char *user) {
         if (fichier){
             parse_dir(object_directory, fichier);
         }
+        else{
+            printf("erreur");
+            return -1;
+        }
 
         fclose(fichier);
 }
+
 
 /*!
  * @brief process_file processes one e-mail file.
