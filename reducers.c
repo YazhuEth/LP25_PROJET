@@ -21,14 +21,16 @@
  * @return a pointer to the updated beginning of the list
  */
 sender_t *add_source_to_list(sender_t *list, char *source_email) {
-    sender_t* element= (sender_t*) malloc(sizeof(sender_t)); // création d'un élément sender
-    strcpy(element->recipient_address,source_email); // attribution du sourcemail à l'element  strcpy(la structure, source);
     sender_t* searcher = find_source_in_list(list,source_email) ;
     
     if(list->recipient_address == NULL){
+        sender_t* element= (sender_t*) malloc(sizeof(sender_t)); // création d'un élément sender
+        strcpy(element->recipient_address,source_email); // attribution du sourcemail à l'element  strcpy(la structure, source);
         return element;}
     
     else if (searcher == NULL){
+        sender_t* element= (sender_t*) malloc(sizeof(sender_t)); // création d'un élément sender
+        strcpy(element->recipient_address,source_email); // attribution du sourcemail à l'element  strcpy(la structure, source);
         element->next = list;
         list->prev = element; // on place l'element en tete de liste;
         return element;
