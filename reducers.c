@@ -151,12 +151,10 @@ void add_recipient_to_source(sender_t *source, char *recipient_email) {
     recipient_t* p = l->head;
     fprintf(f_out,"%s",q->recipient_address);
 
-    while(p->next != NULL){
+    while(p != NULL){
         fprintf(f_out," %d:%s",p->occurrences,p->recipient_address);
         p=p->next;
     }
-    fprintf(f_out," %d:%s\n",p->occurrences,p->recipient_address);
-
     q=q->next;
     return q;
 }
