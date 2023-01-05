@@ -61,16 +61,9 @@ void parse_dir(char *path, FILE *output_file)
  */
 void clear_recipient_list(simple_recipient_t *list)
 {
-    while (list != NULL)
-    {
-
-        int i = 0;
-        while (i < STR_MAX_LEN)
-        {
-            list->email[i] = '\0';
-            i++;
-        }
-        list = list->next;
+    while(list!=NULL){
+        free(list->email);
+        list=list->next;
     }
 }
 
