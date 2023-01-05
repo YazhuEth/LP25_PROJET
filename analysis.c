@@ -28,7 +28,7 @@ void parse_dir(char *path, FILE *output_file)
 
     DIR *dir = opendir(path);
     struct dirent *entry;
-    char temp[1024];
+    char temp[STR_MAX_LEN];
 
     if (dir)
     {
@@ -397,7 +397,7 @@ void process_file(char *object_file, char *temporary_directory)
     // 2. Build full path to all parameters
     // 3. Call parse_file
 
-    char file_temp[1024];
+    char file_temp[STR_MAX_LEN];
     strcpy(file_temp, temporary_directory);
     strcat(file_temp, "/output");
     //printf("%s\n",object_file);
