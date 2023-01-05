@@ -79,6 +79,22 @@ simple_recipient_t *add_recipient_to_list(char *recipient_email, simple_recipien
     strcpy(temp->email, recipient_email);
     temp->next = list;
     return temp;
+	
+    /*simple_recipient_t *p=(simple_recipient_t*)malloc(sizeof(simple_recipient_t));
+
+    strcpy(p->email, recipient_email);
+    p->next=NULL;
+    if(list==NULL){
+        return p;
+    }else{
+        simple_recipient_t *e=list;
+        while(e->next!=NULL){
+            e=e->next;
+        }
+        e->next=p;
+        return list;
+    }
+	*/
 }
 
 /*!
