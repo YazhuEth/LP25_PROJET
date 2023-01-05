@@ -93,7 +93,7 @@ void direct_fork_files(char *data_source, char *temp_files, uint16_t nb_proc) {
                 }
 		fgets(buffer, 1024, fichier);
                 if(fork()==0){
-                    printf("chaine:%sfin\n", buffer);
+                   // printf("chaine:%sfin\n", buffer);
                     process_file(buffer, temp_files);
                     exit(0);
                 }
