@@ -109,6 +109,19 @@ simple_recipient_t *extract_emails(char *buffer, simple_recipient_t *list)
     // 2. Go through buffer and extract e-mails
     // 3. Add each e-mail to list
     // 4. Return list
+    char recipient_email[STR_MAX_LEN];
+    FILE *f_in=fopen(buffer, "r");
+
+    if(f_in!=NULL){
+        fscanf(f_in, "%s ", recipient_email);
+        while(strcmp(recipient_email, "fin" )!=0){
+            list= add_recipient_to_list(recipient_email, list);
+            fscanf(f_in, "%s ", recipient_email);
+        }
+    }
+
+
+    return list;
 }
 
 /*!
