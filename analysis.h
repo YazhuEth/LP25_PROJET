@@ -28,7 +28,7 @@ typedef struct {
 void parse_dir(char *path, FILE *output_file);
 void parse_file(char *filepath, char *output);
 
-void process_directory(task_t *task);
-void process_file(task_t *task);
+void process_directory(char *object_directory, char *temp_files, char *user);
+void process_file(char *object_file, char *temporary_directory);
 
 #endif //A2022_ANALYSIS_H
