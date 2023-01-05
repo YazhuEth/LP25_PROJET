@@ -40,7 +40,7 @@ void direct_fork_directories(char *data_source, char *temp_files, uint16_t nb_pr
                     entry=readdir(dir);
                 }
 
-                char object_directory[500];
+                char object_directory[STR_MAX_LEN];
                 strcpy(object_directory, data_source);
                 strcat(object_directory, "/");
                 strcat(object_directory, entry->d_name);
@@ -78,8 +78,8 @@ void direct_fork_files(char *data_source, char *temp_files, uint16_t nb_proc) {
     // 3 bis: if max processes count already run, wait for one to end before starting a task.
     // 4. Cleanup
     int compteur=0;
-    char add_f[1024];
-    char buffer[1024];
+    char add_f[STR8_MAX_LEN];
+    char buffer[STR_MAX_LEN];
 
     strcpy(add_f, temp_files);
     strcat(add_f,"/step1_output");
