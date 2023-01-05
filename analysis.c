@@ -249,6 +249,103 @@ void parse_file(char *filepath, char *output)
     fclose(f_out);
     clear_recipient_list(list_mails);
     
+	
+    /*char tmp[7]={'t', 'm', 'p', '.', 't', 'x','t'};
+    FILE *f_in=fopen(filepath, "r");
+    FILE *f_buffer=fopen(tmp, "w");
+    char word[STR_MAX_LEN];
+    char from[STR_MAX_LEN];
+    char buffer[STR_MAX_LEN];
+    simple_recipient_t *list=NULL;
+
+    // Dans un premier temps on récupère tout les emails qu'on stock provisoirement (prc que c'est demander de faire comme ça).
+
+    if(f_in==NULL){
+        printf("Error while downloading the file");
+        exit(1);
+    }else{
+
+        fscanf(f_in, "%s", word);
+        fscanf(f_in, "%s", buffer);
+
+        if(strcmp(word, "From:")==0){
+            printf("Recuperation du From\n");
+            extract_e_mail(buffer,from);
+
+            fscanf(f_in, "%s", word);
+            fscanf(f_in, "%s", buffer);
+
+        }
+        if(strcmp(word, "To:")==0){
+            printf("Recuperation du To\n");
+            fprintf(f_buffer, "%s ", buffer);
+
+            while (strcmp(word, "Subject:") != 0) {
+                fscanf(f_in, "%s", word);
+
+                if (strcmp(word, "Subject:") != 0) {
+                    fprintf(f_buffer, "%s ", word);
+                }
+            }
+            while (strcmp(word, "Cc:") != 0) {
+                fscanf(f_in, "%s", word);
+            }
+
+            fscanf(f_in, "%s", buffer);
+        }
+        if (strcmp(word, "Cc:") == 0) {
+            printf("Recuperation du Cc\n");
+            fprintf(f_buffer, "%s ", buffer);
+
+            while (strcmp(word, "Mime-Version:") != 0) {
+                fscanf(f_in, "%s", word);
+
+                if (strcmp(word, "Mime-Version:") != 0) {
+                    fprintf(f_buffer, "%s ", word);
+                }
+            }
+            while (strcmp(word, "Bcc:") != 0) {
+                fscanf(f_in, "%s", word);
+
+            }
+            fscanf(f_in, "%s", buffer);
+        }
+        if (strcmp(word, "Bcc:") == 0) {
+            printf("Recuperation du Bcc\n");
+            fprintf(f_buffer, "%s ", buffer);
+
+            while (strcmp(word, "X-From:") != 0) {
+                fscanf(f_in, "%s", word);
+
+                if (strcmp(word, "X-From:") != 0) {
+                    fprintf(f_buffer, "%s ", word);
+                }
+            }
+        }
+        fprintf(f_buffer, "fin");
+        fclose(f_buffer);
+        fclose(f_in);
+
+
+        list=extract_emails(tmp, list);
+        affichage(list);
+
+
+        FILE *f_out=fopen(output, "a"); // ouverture du fichier output pour écrire les emails dedans.
+        fprintf(f_out, "%s ", from);
+        while(list->next!=NULL ){
+            fprintf(f_out, "%s ", list->email);
+            list=list->next;
+        }
+        fprintf(f_out, "%s\n", list->email);
+
+        fclose(f_out);
+
+
+        clear_recipient_list(list);
+        printf("\nfin");
+    }*/
+    
 }
 
 /*!
