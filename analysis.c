@@ -127,6 +127,7 @@ typedef enum
  * Uses previous utility functions: extract_email, extract_emails, add_recipient_to_list,
  * and clear_recipient_list
  */
+ 
 void parse_file(char *filepath, char *output)
 {
     // 1. Check parameters
@@ -137,19 +138,32 @@ void parse_file(char *filepath, char *output)
     // 6. Unlock file
     // 7. Close file
     // 8. Clear all allocated resources
-
+    
+   // printf("reception:%s",filepath);
+	char *correcteur_path = strpbrk(filepath, "\n"); /* Recherche de l'adresse d'un \n dans la variable chaine */
+                if (correcteur_path != NULL)              /* Adresse trouvée ? */
+                {
+                    *correcteur_path = 0; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
+                }
     FILE *f_in = fopen(filepath, "r");
     FILE *f_out = fopen(output, "a");
 
-    char from[1024];
+    char from[STR_MAX_LEN];
     char buffer[STR_MAX_LEN];
     simple_recipient_t *list_mails = NULL;
 
-    if (f_in == NULL || f_out == NULL)
+    if (f_in == NULL)
     {
-        printf("erreur\n");
-        exit(1);
+    	//printf("Erreur lors de l'ouverture de %s\n",filepath);
+        exit(0);
     }
+    if (f_out == NULL)
+    {
+    	//printf("Erreur lors de l'ouverture de %s\n",output);
+        exit(0);
+    }
+    
+    printf("ok");
 
     fgets(from, 7, f_in);
     while (strcmp(from, "From: ") != 0)
@@ -157,7 +171,7 @@ void parse_file(char *filepath, char *output)
         fgets(from, 7, f_in);
     }
     fgets(from, STR_MAX_LEN - 1, f_in);
-    printf("%s", from);
+    //printf("%s", from);
 
     fgets(buffer, STR_MAX_LEN - 1, f_in);
 
@@ -189,7 +203,7 @@ void parse_file(char *filepath, char *output)
                     *adr_tab = "."; /* Remplacement du caractère par un octet nul (fin de chaîne en C) */
                 }
 
-                printf("%s\n", p);
+                //printf("%s\n", p);
                 list_mails = add_recipient_to_list(p, list_mails);
                 p = strtok(NULL, d);
             }
@@ -223,7 +237,9 @@ void parse_file(char *filepath, char *output)
     flock(f_out, LOCK_UN);
 
     fclose(f_in);
+    fclose(f_out);
     clear_recipient_list(list_mails);
+    
 }
 
 /*!
@@ -265,6 +281,7 @@ void process_file(char *object_file, char *temporary_directory)
     char file_temp[1024];
     strcpy(file_temp, temporary_directory);
     strcat(file_temp, "/output");
+    //printf("%s\n",object_file);
 
     parse_file(object_file, file_temp);
 }
