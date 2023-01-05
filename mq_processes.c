@@ -21,7 +21,13 @@
  * @return the file descriptor of the message queue
  */
 int make_message_queue() {
-    return -1;
+    key_t key= 1111;
+    int msgflg=0666 | IPC_CREAT;
+    int mq=msgget(key,msgflg);
+    if(mq!=0){
+        return 1;
+    }
+    return mq;
 }
 
 /*!
@@ -29,6 +35,10 @@ int make_message_queue() {
  * @param mq the descriptor of the MQ to close
  */
 void close_message_queue(int mq) {
+    int close_mq=msgctl(mq,IPC_RMID,NULL);
+    if(close_mq!=0){
+        perror("close: ");
+    }
 }
 
 /*!
@@ -50,7 +60,21 @@ void child_process(int mq) {
  * @return a malloc'ed array with all children PIDs
  */
 pid_t *mq_make_processes(configuration_t *config, int mq) {
-    return NULL;
+    pid_t pid;
+    pid_t *pids_array;
+    pids_array=malloc(config->process_count*sizeof(pid_t));
+    if(pids_array==NULL){
+        return NULL;
+    }
+    for(int i=0; i<config->process_count;i++){
+        pid=fork();
+        if(pid==0){
+            return pids_array;
+        }else if(pid>0){
+            pids_array[i]=pid;
+        }
+    }
+    return pids_array;
 }
 
 /*!
@@ -100,6 +124,9 @@ void mq_process_directory(configuration_t *config, int mq, pid_t children[]) {
     // 3. Loop while there are directories to process, and while all workers are processing
     // 3 bis. For each worker finishing its task: send a new one if any task is left, keep track of running workers else
     // 4. Cleanup
+
+    
+
 }
 
 /*!
